@@ -14,7 +14,8 @@
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
 
+#define STATIC
+
 #include "ed25519-donna.h"
 #include "ed25519.h"
 #include "ed25519-randombytes.h"
-#include "ed25519-hash.h"
