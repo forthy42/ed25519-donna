@@ -205,8 +205,7 @@ STATIC void contract256_modm(unsigned char out[32], const bignum256modm in) {
 	U64TO8_LE(out + 24, (in[3] >> 24) | (in[4] << 32));
 }
 
-static void
-contract256_window4_modm(signed char r[64], const bignum256modm in) {
+STATIC void contract256_window4_modm(signed char r[64], const bignum256modm in) {
 	char carry;
 	signed char *quads = r;
 	bignum256modm_element_t i, j, v, m;
@@ -232,8 +231,7 @@ contract256_window4_modm(signed char r[64], const bignum256modm in) {
 	r[63] += carry;
 }
 
-static void
-contract256_slidingwindow_modm(signed char r[256], const bignum256modm s, int windowsize) {
+STATIC void contract256_slidingwindow_modm(signed char r[256], const bignum256modm s, int windowsize) {
 	int i,j,k,b;
 	int m = (1 << (windowsize - 1)) - 1, soplen = 256;
 	signed char *bits = r;
