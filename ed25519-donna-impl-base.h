@@ -388,12 +388,49 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 		ge25519_double_p1p1(&t, r);
 		pre=pre1[0];
 		for(j=1; j<S1_TABLE_SIZE; j++) {
-			ge25519_move_conditional_pniels(&pre, &pre1[j], ge25519_windowb_equal(j, k));
+			ge25519_move_conditional_pniels(&pre, &pre1[j], j == k);
 		}
 		ge25519_p1p1_to_full(r, &t);
 		ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
 		ge25519_p1p1_to_partial(&r1, &t);
 		ge25519_move_conditional(r, &r1, slide1[i] != 0);
+	}
+}
+
+/* computes [s1]p1, constant time */
+STATIC void ge25519_scalarmult1(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
+	signed char slide1[256];
+	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
+	ge25519_pniels MM16 pre;
+	ge25519 MM16 d1, r1;
+	ge25519_p1p1 MM16 t;
+	int32_t i, j;
+
+	contract256_slidingwindow_modm(slide1, s1, S1_SWINDOWSIZE);
+
+	ge25519_full_to_pniels(pre1, p1);
+	ge25519_double(&d1, p1);
+	for (i = 0; i < S1_TABLE_SIZE-1; i++)
+		ge25519_pnielsadd(&pre1[i+1], &d1, &pre1[i]);
+
+	/* set neutral */
+	ge25519_set_neutral(r);
+
+	i = 255;
+	while ((i >= 0) && !slide1[i])
+		i--;
+	for (; i >= 0; i--) {
+		int k=abs(slide1[i]/2);
+		ge25519_double_p1p1(&t, r);
+		if(slide1[i]) {
+			pre=pre1[0];
+			for(j=1; j<S1_TABLE_SIZE; j++) {
+				ge25519_move_conditional_pniels(&pre, &pre1[j], j == k);
+			}
+			ge25519_p1p1_to_full(r, &t);
+			ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
+		}
+		ge25519_p1p1_to_partial(r, &t);
 	}
 }
 
