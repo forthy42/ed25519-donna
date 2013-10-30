@@ -248,11 +248,12 @@ DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
 	r->z[0] = 1;
 }
 
-DONNA_INLINE static void ge25519_set_neutral_niels(ge25519_pniels *r)
+DONNA_INLINE static void ge25519_set_neutral_pniels(ge25519_pniels *r)
 {
-	memset(r, 0, sizeof(ge25519_niels));
+	memset(r, 0, sizeof(ge25519_pniels));
 	r->xaddy[0] = 1;
 	r->ysubx[0] = 1;
+	r->z[0] = 2;
 }
 
 #define S1_SWINDOWSIZE 5
@@ -344,41 +345,55 @@ DONNA_INLINE static void ge25519_move_conditional_niels(ge25519_niels *a, const 
 	curve25519_move_conditional(a->t2d, b->t2d, flag);
 }
 
+DONNA_INLINE static void ge25519_move_conditional_pniels(ge25519_pniels *a, const ge25519_pniels *b, uint32_t flag) {
+	curve25519_move_conditional(a->ysubx, b->ysubx, flag);
+	curve25519_move_conditional(a->xaddy, b->xaddy, flag);
+	curve25519_move_conditional(a->z, b->z, flag);
+	curve25519_move_conditional(a->t2d, b->t2d, flag);
+}
+
+DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, uint32_t flag) {
+	curve25519_move_conditional(a->x, b->x, flag);
+	curve25519_move_conditional(a->y, b->y, flag);
+	curve25519_move_conditional(a->z, b->z, flag);
+	curve25519_move_conditional(a->t, b->t, flag);
+}
+
 #include <stdio.h>
 
 /* computes [s1]p1, constant time */
 STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[256];
-	ge25519_pniels MM16 pre1[S1_TABLE_SIZE+1];
+	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
 	ge25519_pniels MM16 pre;
-	ge25519 MM16 d1;
+	ge25519 MM16 d1, r1;
 	ge25519_p1p1 MM16 t;
 	int32_t i, j;
 
 	contract256_slidingwindow_modm(slide1, s1, S1_SWINDOWSIZE);
 
 	ge25519_double(&d1, p1);
-	ge25519_full_to_pniels(pre1+1, p1);
+	ge25519_full_to_pniels(pre1, p1);
 	for (i = 0; i < S1_TABLE_SIZE - 1; i++)
-		ge25519_pnielsadd(&pre1[i+2], &d1, &pre1[i+1]);
+		ge25519_pnielsadd(&pre1[i+1], &d1, &pre1[i]);
 
 	/* set neutral */
 	ge25519_set_neutral(r);
-	ge25519_set_neutral_niels(&pre1[0]);
 
 	i = 255;
 	while ((i >= 0) && !slide1[i])
 		i--;
-	fprintf(stderr, "start scalar mult at %d\n", i);
 	for (; i >= 0; i--) {
+		int k=abs(slide1[i])/2;
 		ge25519_double_p1p1(&t, r);
-		ge25519_p1p1_to_full(r, &t);
 		pre=pre1[0];
-		for(j=1; j<S1_SWINDOWSIZE; j++) {
-			ge25519_move_conditional_niels(&pre, pre1+j, ge25519_windowb_equal(j,abs(slide1[j])/2+!j));
+		for(j=1; j<S1_TABLE_SIZE; j++) {
+			ge25519_move_conditional_pniels(&pre, &pre1[j], ge25519_windowb_equal(j, k));
 		}
+		ge25519_p1p1_to_full(r, &t);
 		ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
-		ge25519_p1p1_to_partial(r, &t);
+		ge25519_p1p1_to_partial(&r1, &t);
+		ge25519_move_conditional(r, &r1, slide1[i] != 0);
 	}
 }
 
