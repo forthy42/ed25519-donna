@@ -4,4 +4,5 @@ CC="gcc -O2"
 LIB=ed25519-prims
 
 libtool --tag=CC --mode=compile $CC -c $LIB.c
-libtool --tag=CC --mode=link $CC -module -rpath /usr/local/lib64/ $LIB.lo -o .libs/$LIB.la
+libtool --tag=CC --mode=link $CC -module -rpath /usr/local/lib64/ $LIB.lo -o .libs/lib$LIB.la
+(cd .libs/.libs; tar cf - .) | ssh root@localhost "cd /usr/local/lib64; tar --no-same-owner -xvf -"

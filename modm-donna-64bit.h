@@ -107,8 +107,7 @@ barrett_reduce256_modm(bignum256modm r, const bignum256modm q1, const bignum256m
 }
 
 
-static void
-add256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y) {
+STATIC void add256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y) {
 	bignum256modm_element_t c;
 
 	c  = x[0] + y[0]; r[0] = c & 0xffffffffffffff; c >>= 56;
@@ -120,8 +119,7 @@ add256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y) {
 	reduce256_modm(r);
 }
 
-static void
-mul256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y) {
+STATIC void mul256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y) {
 	bignum256modm q1, r1;
 	uint128_t c, mul;
 	bignum256modm_element_t f;
