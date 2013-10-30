@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CC="gcc -O2"
+CC="gcc -O2 $1"
 LIB=ed25519-prims
 
 libtool --tag=CC --mode=compile $CC -c $LIB.c

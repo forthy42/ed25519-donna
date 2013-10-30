@@ -359,8 +359,6 @@ DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, 
 	curve25519_move_conditional(a->t, b->t, flag);
 }
 
-#include <stdio.h>
-
 /* computes [s1]p1, constant time */
 STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[64];

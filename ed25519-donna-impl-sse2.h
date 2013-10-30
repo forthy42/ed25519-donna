@@ -165,7 +165,7 @@ ge25519_double(ge25519 *r, const ge25519 *p) {
 	ge25519_p1p1_to_full_slow(r, &t);
 }
 
-static void
+STATIC void
 ge25519_add(ge25519 *r, const ge25519 *p, const ge25519 *q) {
 	ge25519_p1p1 MM16 t;
 	ge25519_add_p1p1(&t, p, q);
@@ -221,7 +221,7 @@ ge25519_pnielsadd(ge25519_pniels *r, const ge25519 *p, const ge25519_pniels *q) 
 	pack & unpack
 */
 
-static void
+STATIC void
 ge25519_pack(unsigned char r[32], const ge25519 *p) {
 	bignum25519 MM16 tx, ty, zi;
 	unsigned char parity[32];
@@ -234,7 +234,7 @@ ge25519_pack(unsigned char r[32], const ge25519 *p) {
 }
 
 
-static int
+STATIC int
 ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]) {
 	static const bignum25519 MM16 one = {1};
 	static const unsigned char zero[32] = {0};
@@ -296,7 +296,7 @@ ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]) {
 #define S2_SWINDOWSIZE 7
 #define S2_TABLE_SIZE (1<<(S2_SWINDOWSIZE-2))
 
-static void
+STATIC void
 ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1, const bignum256modm s2) {
 	signed char slide1[256], slide2[256];
 	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
@@ -338,7 +338,7 @@ ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256
 	}
 }
 
-static void
+STATIC void
 ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[256];
 	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
@@ -381,9 +381,62 @@ ge25519_move_conditional_niels(ge25519_niels *a, const ge25519_niels *b, size_t 
 	curve25519_move_conditional(a->t2d, b->t2d, flag);
 }
 
+DONNA_INLINE static void
+ge25519_move_conditional_pniels(ge25519_pniels *a, const ge25519_pniels *b, size_t flag) {
+	curve25519_move_conditional(a->ysubx, b->ysubx, flag);
+	curve25519_move_conditional(a->xaddy, b->xaddy, flag);
+	curve25519_move_conditional(a->z, b->z, flag);
+	curve25519_move_conditional(a->t2d, b->t2d, flag);
+}
+
 static uint32_t
 ge25519_windowb_equal(uint32_t b, uint32_t c) {
 	return ((b ^ c) - 1) >> 31;
+}
+
+DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
+{
+ 	memset(r, 0, sizeof(ge25519));
+	r->y[0] = 1;
+	r->z[0] = 1;
+}
+
+/* computes [s1]p1, constant time */
+STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
+	signed char slide1[64];
+	ge25519_pniels MM16 pre1[9];
+	ge25519_pniels MM16 pre;
+	ge25519 MM16 d1, r1;
+	ge25519_p1p1 MM16 t;
+	int32_t i, j;
+
+	contract256_window4_modm(slide1, s1);
+
+	/* set neutral */
+	ge25519_set_neutral(r);
+
+	ge25519_full_to_pniels(pre1, r);
+	ge25519_full_to_pniels(pre1+1, p1);
+	ge25519_double(&d1, p1);
+	ge25519_full_to_pniels(pre1+2, &d1);
+	for (i = 0; i < 7; i++) {
+		ge25519_pnielsadd(&pre1[i+2], &d1, &pre1[i]);
+	}
+
+	for (i = 63; i >= 0; i--) {
+		int k=abs(slide1[i]);
+		ge25519_double_partial(r, r);
+		ge25519_double_partial(r, r);
+		ge25519_double_partial(r, r);
+		ge25519_double_p1p1(&t, r);
+		pre=pre1[0];
+		for(j=1; j<9; j++) {
+			ge25519_move_conditional_pniels(&pre, &pre1[j], j == k);
+		}
+		ge25519_p1p1_to_full(r, &t);
+		ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
+		ge25519_p1p1_to_partial(r, &t);
+	}
 }
 
 static void
@@ -405,7 +458,7 @@ ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const ge25519_niels table
 	curve25519_move_conditional(t->t2d, neg, sign);
 }
 
-static void
+STATIC void
 ge25519_scalarmult_base_niels(ge25519 *r, const ge25519_niels table[256], const bignum256modm s) {
 	signed char b[64];
 	uint32_t i;
@@ -435,3 +488,8 @@ ge25519_scalarmult_base_niels(ge25519 *r, const ge25519_niels table[256], const 
 		ge25519_nielsadd2(r, &t);
 	}
 }
+
+STATIC void ge25519_scalarmult_base(ge25519 *r, const bignum256modm s) {
+	ge25519_scalarmult_base_niels(r, ge25519_niels_base_multiples, s);
+}
+
