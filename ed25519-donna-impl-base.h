@@ -359,6 +359,11 @@ DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, 
 	curve25519_move_conditional(a->t, b->t, flag);
 }
 
+/*
+ * The following conditional move stuff uses conditional moves.
+ * I will check on which compilers this works, and provide suitable
+ * workarounds for those where it doesn't.
+ */
 DONNA_INLINE static void ge25519_cmove_stride4(uint64_t * r, uint64_t * p, uint64_t * pos, uint64_t * n, int stride) {
   int i;
   uint64_t x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
@@ -377,10 +382,11 @@ DONNA_INLINE static void ge25519_cmove_stride4(uint64_t * r, uint64_t * p, uint6
   r[2] = x2;
   r[3] = x3;
 }
+#define HAS_CMOVE_STRIDE4
 
-DONNA_INLINE static void ge25519_cmove_stride3(uint64_t * r, uint64_t * p, uint64_t * pos, uint64_t * n, int stride) {
+DONNA_INLINE static void ge25519_cmove_stride3(long * r, long * p, long * pos, long * n, int stride) {
   int i;
-  uint64_t x0=r[0], x1=r[1], x2=r[2], y0, y1, y2;
+  long x0=r[0], x1=r[1], x2=r[2], y0, y1, y2;
   for(; p<n; p+=stride) {
     y0 = p[0];
     y1 = p[1];
@@ -393,27 +399,42 @@ DONNA_INLINE static void ge25519_cmove_stride3(uint64_t * r, uint64_t * p, uint6
   r[1] = x1;
   r[2] = x2;
 }
+#define HAS_CMOVE_STRIDE3
 
 static void ge25519_move_conditional_pniels_array(ge25519_pniels * r, ge25519_pniels * p, int pos, int n) {
+#ifdef HAS_CMOVE_STRIDE4
   int i;
-  for(i=0; i<sizeof(ge25519_pniels)/sizeof(uint64_t); i+=4) {
-    ge25519_cmove_stride4(((uint64_t*)r)+i,
-			  ((uint64_t*)p)+i,
-			  ((uint64_t*)(p+pos))+i,
-			  ((uint64_t*)(p+n))+i,
-			  sizeof(ge25519_pniels)/sizeof(uint64_t));
+  for(i=0; i<sizeof(ge25519_pniels)/sizeof(long); i+=4) {
+    ge25519_cmove_stride4(((long*)r)+i,
+			  ((long*)p)+i,
+			  ((long*)(p+pos))+i,
+			  ((long*)(p+n))+i,
+			  sizeof(ge25519_pniels)/sizeof(long));
   }
+#else
+  int i;
+  for(i=0; i<n; i++) {
+    ge25519_move_conditional_pniels(r, p+i, pos==i);
+  }
+#endif
 }
 
 static void ge25519_move_conditional_niels_array(ge25519_niels * r, ge25519_niels * p, int pos, int n) {
+#ifdef HAS_CMOVE_STRIDE3
   int i;
-  for(i=0; i<sizeof(ge25519_niels)/sizeof(uint64_t); i+=3) {
-    ge25519_cmove_stride3(((uint64_t*)r)+i,
-			  ((uint64_t*)p)+i,
-			  ((uint64_t*)(p+pos))+i,
-			  ((uint64_t*)(p+n))+i,
-			  sizeof(ge25519_niels)/sizeof(uint64_t));
+  for(i=0; i<sizeof(ge25519_niels)/sizeof(long); i+=3) {
+    ge25519_cmove_stride3(((long*)r)+i,
+			  ((long*)p)+i,
+			  ((long*)(p+pos))+i,
+			  ((long*)(p+n))+i,
+			  sizeof(ge25519_niels)/sizeof(long));
   }
+#else
+  int i;
+  for(i=0; i<n; i++) {
+    ge25519_move_conditional_niels(r, p+i, pos==i);
+  }
+#endif
 }
 
 /* computes [s1]p1, constant time */
