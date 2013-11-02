@@ -195,7 +195,7 @@ STATIC void expand_raw256_modm(bignum256modm out, const unsigned char in[32]) {
 	out[1] = ((x[ 0] >> 56) | (x[ 1] <<  8)) & 0xffffffffffffff;
 	out[2] = ((x[ 1] >> 48) | (x[ 2] << 16)) & 0xffffffffffffff;
 	out[3] = ((x[ 2] >> 40) | (x[ 3] << 24)) & 0xffffffffffffff;
-	out[4] = ((x[ 3] >> 32)                ) & 0x0000ffffffffff;
+	out[4] = ((x[ 3] >> 32)                ) & 0x000000ffffffff;
 }
 
 STATIC void contract256_modm(unsigned char out[32], const bignum256modm in) {
@@ -335,4 +335,15 @@ STATIC int isone256_modm_batch(const bignum256modm a) {
 		if (a[i] != ((i) ? 0 : 1))
 			return 0;
 	return 1;
+}
+
+/* can a fit in to (at most) 128 bits */
+static int
+isatmost128bits256_modm_batch(const bignum256modm a) {
+	uint64_t mask =
+		((a[4]                   )  | /*  32 */
+		 (a[3]                   )  | /*  88 */
+		 (a[2] & 0xffffffffff0000));
+
+	return (mask == 0);
 }

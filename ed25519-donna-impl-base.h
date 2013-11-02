@@ -42,11 +42,11 @@ ge25519_add_p1p1(ge25519_p1p1 *r, const ge25519 *p, const ge25519 *q) {
 	curve25519_mul(c, p->t, q->t);
 	curve25519_mul(c, c, ge25519_ec2d);
 	curve25519_mul(d, p->z, q->z);
-	curve25519_add_reduce(d, d, d);
+	curve25519_add(d, d, d);
 	curve25519_sub(r->x, b, a);
 	curve25519_add(r->y, b, a);
-	curve25519_add(r->z, d, c);
-	curve25519_sub(r->t, d, c);
+	curve25519_add_after_basic(r->z, d, c);
+	curve25519_sub_after_basic(r->t, d, c);
 }
 
 
@@ -60,10 +60,10 @@ ge25519_double_p1p1(ge25519_p1p1 *r, const ge25519 *p) {
 	curve25519_add_reduce(c, c, c);
 	curve25519_add(r->x, p->x, p->y);
 	curve25519_square(r->x, r->x);
-	curve25519_add_reduce(r->y, b, a);
-	curve25519_sub_reduce(r->z, b, a);
-	curve25519_sub_reduce(r->x, r->x, r->y);
-	curve25519_sub(r->t, c, r->z);
+	curve25519_add(r->y, b, a);
+	curve25519_sub(r->z, b, a);
+	curve25519_sub_after_basic(r->x, r->x, r->y);
+	curve25519_sub_after_basic(r->t, c, r->z);
 }
 
 static void
@@ -137,9 +137,9 @@ ge25519_nielsadd2(ge25519 *r, const ge25519_niels *q) {
 	curve25519_add(h, e, a);
 	curve25519_sub(e, e, a);
 	curve25519_mul(c, r->t, q->t2d);
-	curve25519_add_reduce(f, r->z, r->z);
-	curve25519_add(g, f, c);
-	curve25519_sub(f, f, c);
+	curve25519_add(f, r->z, r->z);
+	curve25519_add_after_basic(g, f, c);
+	curve25519_sub_after_basic(f, f, c);
 	curve25519_mul(r->x, e, f);
 	curve25519_mul(r->y, h, g);
 	curve25519_mul(r->z, g, f);
@@ -158,9 +158,9 @@ ge25519_pnielsadd(ge25519_pniels *r, const ge25519 *p, const ge25519_pniels *q) 
 	curve25519_sub(x, x, a);
 	curve25519_mul(c, p->t, q->t2d);
 	curve25519_mul(t, p->z, q->z);
-	curve25519_add_reduce(t, t, t);
-	curve25519_add(z, t, c);
-	curve25519_sub(t, t, c);
+	curve25519_add(t, t, t);
+	curve25519_add_after_basic(z, t, c);
+	curve25519_sub_after_basic(t, t, c);
 	curve25519_mul(r->xaddy, x, t);
 	curve25519_mul(r->ysubx, y, z);
 	curve25519_mul(r->z, z, t);
@@ -334,11 +334,6 @@ STATIC void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bign
 	}
 }
 
-DONNA_INLINE static uint32_t
-ge25519_windowb_equal(uint32_t b, uint32_t c) {
-	return ((b ^ c) - 1) >> 31;
-}
-
 DONNA_INLINE static void ge25519_move_conditional_niels(ge25519_niels *a, const ge25519_niels *b, uint32_t flag) {
 	curve25519_move_conditional(a->ysubx, b->ysubx, flag);
 	curve25519_move_conditional(a->xaddy, b->xaddy, flag);
@@ -472,6 +467,14 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 	}
 }
 
+#if !defined(HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS)
+
+DONNA_INLINE static uint32_t
+ge25519_windowb_equal(uint32_t b, uint32_t c) {
+	return ((b ^ c) - 1) >> 31;
+}
+
+
 static void ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const ge25519_niels table[256], uint32_t pos, signed char b) {
 	bignum25519 MM16 neg;
 	uint32_t sign = (uint32_t)((unsigned char)b >> 7);
@@ -487,6 +490,8 @@ static void ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const ge25519
 	curve25519_neg(neg, t->t2d);
 	curve25519_move_conditional(t->t2d, neg, sign);
 }
+
+#endif /* HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS */
 
 
 /* computes [s]basepoint */

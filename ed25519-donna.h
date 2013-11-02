@@ -11,6 +11,16 @@
 
 #include "ed25519-donna-portable.h"
 
+#if !defined(ED25519_NO_INLINE_ASM)
+	/* detect extra features first so un-needed functions can be disabled throughout */
+	#if defined(ED25519_SSE2)
+	#else
+		#if defined(COMPILER_GCC) && defined(CPU_X86_64)
+		#define ED25519_GCC_64BIT_CHOOSE
+		#endif
+	#endif
+#endif
+
 #if defined(ED25519_SSE2)
 #include "curve25519-donna-sse2.h"
 #elif defined(HAVE_UINT128)
@@ -65,6 +75,7 @@ typedef struct ge25519_pniels_t {
 
 #if defined(HAVE_UINT128) && !defined(ED25519_SSE2)
 #include "ed25519-donna-64bit-tables.h"
+#include "ed25519-donna-64bit-x86.h"
 #else
 #include "ed25519-donna-32bit-tables.h"
 #endif
