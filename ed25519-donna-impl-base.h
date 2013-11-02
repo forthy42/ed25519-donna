@@ -359,9 +359,9 @@ DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, 
  * I will check on which compilers this works, and provide suitable
  * workarounds for those where it doesn't.
  */
-DONNA_INLINE static void ge25519_cmove_stride4(uint64_t * r, uint64_t * p, uint64_t * pos, uint64_t * n, int stride) {
+DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, long * n, int stride) {
   int i;
-  uint64_t x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
+  long x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
   for(p+=stride; p<n; p+=stride) {
     y0 = p[0];
     y1 = p[1];
@@ -396,7 +396,7 @@ DONNA_INLINE static void ge25519_cmove_stride3(long * r, long * p, long * pos, l
 }
 #define HAS_CMOVE_STRIDE3
 
-static void ge25519_move_conditional_pniels_array(ge25519_pniels * r, ge25519_pniels * p, int pos, int n) {
+static void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25519_pniels * p, int pos, int n) {
 #ifdef HAS_CMOVE_STRIDE4
   int i;
   for(i=0; i<sizeof(ge25519_pniels)/sizeof(long); i+=4) {
@@ -414,7 +414,7 @@ static void ge25519_move_conditional_pniels_array(ge25519_pniels * r, ge25519_pn
 #endif
 }
 
-static void ge25519_move_conditional_niels_array(ge25519_niels * r, ge25519_niels * p, int pos, int n) {
+static void ge25519_move_conditional_niels_array(ge25519_niels * r, const ge25519_niels * p, int pos, int n) {
 #ifdef HAS_CMOVE_STRIDE3
   int i;
   for(i=0; i<sizeof(ge25519_niels)/sizeof(long); i+=3) {

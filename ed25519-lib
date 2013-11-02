@@ -1,9 +1,10 @@
 #!/bin/bash
 
-CC="gcc -O3 $1"
+PREFIX=${PREFIX-}
+CC=${CC-"${PREFIX}gcc -O3 $1"}
 LIB=ed25519-prims
-BITS=64
+BITS=${BITS-64}
 
-libtool --tag=CC --mode=compile $CC -c $LIB.c
-libtool --tag=CC --mode=link $CC -module -rpath /usr/local/lib$BITS/ $LIB.lo -o .libs/lib$LIB.la
+${PREFIX}libtool --tag=CC --mode=compile $CC -c $LIB.c
+${PREFIX}libtool --tag=CC --mode=link $CC -module -rpath /usr/local/lib$BITS/ $LIB.lo -o .libs/lib$LIB.la
 (cd .libs/.libs; tar cf - .) | ssh root@localhost "cd /usr/local/lib$BITS; tar --no-same-owner -xvf -"
