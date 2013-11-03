@@ -338,8 +338,7 @@ STATIC int isone256_modm_batch(const bignum256modm a) {
 }
 
 /* can a fit in to (at most) 128 bits */
-static int
-isatmost128bits256_modm_batch(const bignum256modm a) {
+STATIC int isatmost128bits256_modm_batch(const bignum256modm a) {
 	uint64_t mask =
 		((a[4]                   )  | /*  32 */
 		 (a[3]                   )  | /*  88 */
