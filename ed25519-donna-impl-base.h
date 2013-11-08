@@ -248,14 +248,6 @@ DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
 	r->z[0] = 1;
 }
 
-DONNA_INLINE static void ge25519_set_neutral_pniels(ge25519_pniels *r)
-{
-	memset(r, 0, sizeof(ge25519_pniels));
-	r->xaddy[0] = 1;
-	r->ysubx[0] = 1;
-	r->z[0] = 2;
-}
-
 #define S1_SWINDOWSIZE 5
 #define S1_TABLE_SIZE (1<<(S1_SWINDOWSIZE-2))
 #define S2_SWINDOWSIZE 7
@@ -399,7 +391,7 @@ STATIC void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25
 
 STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const uint8_t p[8][96], int pos, int n) {
   int i;
-  for(i=0; i<sizeof(ge25519_niels)/sizeof(long); i+=4) {
+  for(i=0; i<96/sizeof(long); i+=4) {
     ge25519_cmove_stride4(((long*)r)+i,
 			  ((long*)p)+i,
 			  ((long*)(p+pos))+i,

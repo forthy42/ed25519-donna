@@ -275,6 +275,13 @@ ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]) {
 	scalarmults
 */
 
+DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
+{
+ 	memset(r, 0, sizeof(ge25519));
+	r->y[0] = 1;
+	r->z[0] = 1;
+}
+
 #define S1_SWINDOWSIZE 5
 #define S1_TABLE_SIZE (1<<(S1_SWINDOWSIZE-2))
 #define S2_SWINDOWSIZE 7
@@ -397,11 +404,15 @@ STATIC void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25
 #endif
 }
 
-DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
-{
- 	memset(r, 0, sizeof(ge25519));
-	r->y[0] = 1;
-	r->z[0] = 1;
+STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const uint8_t p[8][96], int pos, int n) {
+  int i;
+  for(i=0; i<96/sizeof(long); i+=4) {
+    ge25519_cmove_stride4(((long*)r)+i,
+			  ((long*)p)+i,
+			  ((long*)(p+pos))+i,
+			  ((long*)(p+n))+i,
+			  96/sizeof(long));
+  }
 }
 
 /* computes [s1]p1, constant time */
@@ -440,11 +451,6 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 }
 
 #if !defined(HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS)
-static uint32_t
-ge25519_windowb_equal(uint32_t b, uint32_t c) {
-	return ((b ^ c) - 1) >> 31;
-}
-
 static void
 ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][96], uint32_t pos, signed char b) {
 	bignum25519 MM16 neg;
@@ -458,8 +464,7 @@ ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][
 	packed[0] = 1;
 	packed[32] = 1;
 
-	for (i = 0; i < 8; i++)
-		curve25519_move_conditional_bytes(packed, table[(pos * 8) + i], ge25519_windowb_equal(u, i + 1));
+	ge25519_move_conditional_niels_array(packed, &table[pos*8], u-1, 8);
 
 	/* expand in to t */
 	curve25519_expand(t->ysubx, packed +  0);
