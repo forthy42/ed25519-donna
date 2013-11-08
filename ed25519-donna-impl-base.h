@@ -261,7 +261,7 @@ DONNA_INLINE static void ge25519_set_neutral_pniels(ge25519_pniels *r)
 #define S2_SWINDOWSIZE 7
 #define S2_TABLE_SIZE (1<<(S2_SWINDOWSIZE-2))
 
-/* computes [s1]p1 + [s2]base */
+/* computes [s1]p1 + [s2]p1 */
 STATIC void ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1, const bignum256modm s2) {
 	signed char slide1[256], slide2[256];
 	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
