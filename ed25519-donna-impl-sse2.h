@@ -296,6 +296,7 @@ ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]) {
 #define S2_SWINDOWSIZE 7
 #define S2_TABLE_SIZE (1<<(S2_SWINDOWSIZE-2))
 
+/* computes [s1]p1 + [s2]base */
 STATIC void
 ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1, const bignum256modm s2) {
 	signed char slide1[256], slide2[256];
