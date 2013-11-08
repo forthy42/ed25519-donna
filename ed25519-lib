@@ -1,10 +1,12 @@
 #!/bin/bash
 
 PREFIX=${PREFIX-}
-CC=${CC-"${PREFIX}gcc -O3 $1"}
+CC=${CC-"${PREFIX}gcc -O3 $*"}
 LIB=ed25519-prims
 BITS=${BITS-64}
+INSTALL=${INSTALL-/usr/local}
 
 ${PREFIX}libtool --tag=CC --mode=compile $CC -c $LIB.c
-${PREFIX}libtool --tag=CC --mode=link $CC -module -rpath /usr/local/lib$BITS/ $LIB.lo -o .libs/lib$LIB.la
-(cd .libs/.libs; tar cf - .) | ssh root@localhost "cd /usr/local/lib$BITS; tar --no-same-owner -xvf -"
+${PREFIX}libtool --tag=CC --mode=link $CC -module -rpath $INSTALL/lib$BITS/ $LIB.lo -o .libs/lib$LIB.la
+(cd .libs/.libs; tar cf - .) | ssh root@localhost "cd $INSTALL/lib$BITS; tar --no-same-owner -xvf -"
+tar cf - ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h | ssh root@localhost "cd $INSTALL/include; tar --no-same-owner -xvf -"
