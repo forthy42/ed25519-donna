@@ -379,23 +379,6 @@ DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, l
 }
 #define HAS_CMOVE_STRIDE4
 
-DONNA_INLINE static void ge25519_cmove_stride3(long * r, long * p, long * pos, long * n, int stride) {
-  int i;
-  long x0=r[0], x1=r[1], x2=r[2], y0, y1, y2;
-  for(; p<n; p+=stride) {
-    y0 = p[0];
-    y1 = p[1];
-    y2 = p[2];
-    x0 = (p==pos) ? y0 : x0;
-    x1 = (p==pos) ? y1 : x1;
-    x2 = (p==pos) ? y2 : x2;
-  }
-  r[0] = x0;
-  r[1] = x1;
-  r[2] = x2;
-}
-#define HAS_CMOVE_STRIDE3
-
 STATIC void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25519_pniels * p, int pos, int n) {
 #ifdef HAS_CMOVE_STRIDE4
   int i;
@@ -414,22 +397,15 @@ STATIC void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25
 #endif
 }
 
-STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const ge25519_niels * p, int pos, int n) {
-#ifdef HAS_CMOVE_STRIDE3
+STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const uint8_t p[8][96], int pos, int n) {
   int i;
-  for(i=0; i<sizeof(ge25519_niels)/sizeof(long); i+=3) {
-    ge25519_cmove_stride3(((long*)r)+i,
+  for(i=0; i<sizeof(ge25519_niels)/sizeof(long); i+=4) {
+    ge25519_cmove_stride4(((long*)r)+i,
 			  ((long*)p)+i,
 			  ((long*)(p+pos))+i,
 			  ((long*)(p+n))+i,
-			  sizeof(ge25519_niels)/sizeof(long));
+			  96/sizeof(long));
   }
-#else
-  int i;
-  for(i=0; i<n; i++) {
-    ge25519_move_conditional_niels(r, p+i, pos==i);
-  }
-#endif
 }
 
 /* computes [s1]p1, constant time */
@@ -474,28 +450,38 @@ ge25519_windowb_equal(uint32_t b, uint32_t c) {
 	return ((b ^ c) - 1) >> 31;
 }
 
-
-static void ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const ge25519_niels table[256], uint32_t pos, signed char b) {
-	bignum25519 MM16 neg;
+static void
+ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][96], uint32_t pos, signed char b) {
+	bignum25519 neg;
 	uint32_t sign = (uint32_t)((unsigned char)b >> 7);
 	uint32_t mask = ~(sign - 1);
 	uint32_t u = (b + mask) ^ mask;
 	uint32_t i;
-	memset(t, 0, sizeof(ge25519_niels));
-	t->xaddy[0] = 1;
-	t->ysubx[0] = 1;
 
-	ge25519_move_conditional_niels_array(t, &table[pos*8], u-1, 8);
+	/* ysubx, xaddy, t2d in packed form. initialize to ysubx = 1, xaddy = 1, t2d = 0 */
+	uint8_t packed[96] = {0};
+	packed[0] = 1;
+	packed[32] = 1;
+
+	ge25519_move_conditional_niels_array(packed, &table[pos*8], u-1, 8);
+
+	/* expand in to t */
+	curve25519_expand(t->ysubx, packed +  0);
+	curve25519_expand(t->xaddy, packed + 32);
+	curve25519_expand(t->t2d  , packed + 64);
+
+	/* adjust for sign */
 	curve25519_swap_conditional(t->ysubx, t->xaddy, sign);	
 	curve25519_neg(neg, t->t2d);
-	curve25519_move_conditional(t->t2d, neg, sign);
+	curve25519_swap_conditional(t->t2d, neg, sign);
 }
 
 #endif /* HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS */
 
 
 /* computes [s]basepoint */
-static void ge25519_scalarmult_base_niels(ge25519 *r, const ge25519_niels basepoint_table[256], const bignum256modm s) {
+static void
+ge25519_scalarmult_base_niels(ge25519 *r, const uint8_t basepoint_table[256][96], const bignum256modm s) {
 	signed char b[64];
 	uint32_t i;
 	ge25519_niels MM16 t;
