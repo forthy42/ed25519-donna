@@ -31,7 +31,7 @@ ge25519_full_to_pniels(ge25519_pniels *p, const ge25519 *r) {
 
 static void
 ge25519_add_p1p1(ge25519_p1p1 *r, const ge25519 *p, const ge25519 *q) {
-	bignum25519 MM16 a,b,c,d,t,u;
+	bignum25519 a,b,c,d,t,u;
 
 	curve25519_sub(a, p->y, p->x);
 	curve25519_add(b, p->y, p->x);
@@ -52,7 +52,7 @@ ge25519_add_p1p1(ge25519_p1p1 *r, const ge25519 *p, const ge25519 *q) {
 
 static void
 ge25519_double_p1p1(ge25519_p1p1 *r, const ge25519 *p) {
-	bignum25519 MM16 a,b,c;
+	bignum25519 a,b,c;
 
 	curve25519_square(a, p->x);
 	curve25519_square(b, p->y);
@@ -70,7 +70,7 @@ static void
 ge25519_nielsadd2_p1p1(ge25519_p1p1 *r, const ge25519 *p, const ge25519_niels *q, unsigned char signbit) {
 	const bignum25519 *qb = (const bignum25519 *)q;
 	bignum25519 *rb = (bignum25519 *)r;
-	bignum25519 MM16 a,b,c;
+	bignum25519 a,b,c;
 
 	curve25519_sub(a, p->y, p->x);
 	curve25519_add(b, p->y, p->x);
@@ -89,7 +89,7 @@ static void
 ge25519_pnielsadd_p1p1(ge25519_p1p1 *r, const ge25519 *p, const ge25519_pniels *q, unsigned char signbit) {
 	const bignum25519 *qb = (const bignum25519 *)q;
 	bignum25519 *rb = (bignum25519 *)r;
-	bignum25519 MM16 a,b,c;
+	bignum25519 a,b,c;
 
 	curve25519_sub(a, p->y, p->x);
 	curve25519_add(b, p->y, p->x);
@@ -128,7 +128,7 @@ ge25519_add(ge25519 *r, const ge25519 *p,  const ge25519 *q) {
 
 static void
 ge25519_nielsadd2(ge25519 *r, const ge25519_niels *q) {
-	bignum25519 MM16 a,b,c,e,f,g,h;
+	bignum25519 a,b,c,e,f,g,h;
 
 	curve25519_sub(a, r->y, r->x);
 	curve25519_add(b, r->y, r->x);
@@ -148,7 +148,7 @@ ge25519_nielsadd2(ge25519 *r, const ge25519_niels *q) {
 
 static void
 ge25519_pnielsadd(ge25519_pniels *r, const ge25519 *p, const ge25519_pniels *q) {
-	bignum25519 MM16 a,b,c,x,y,z,t;
+	bignum25519 a,b,c,x,y,z,t;
 
 	curve25519_sub(a, p->y, p->x);
 	curve25519_add(b, p->y, p->x);
@@ -178,7 +178,7 @@ ge25519_pnielsadd(ge25519_pniels *r, const ge25519 *p, const ge25519_pniels *q) 
 
 STATIC void
 ge25519_pack(unsigned char r[32], const ge25519 *p) {
-	bignum25519 MM16 tx, ty, zi;
+	bignum25519 tx, ty, zi;
 	unsigned char parity[32];
 	curve25519_recip(zi, p->z);
 	curve25519_mul(tx, p->x, zi);
@@ -190,10 +190,10 @@ ge25519_pack(unsigned char r[32], const ge25519 *p) {
 
 STATIC int ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]) {
 	static const unsigned char zero[32] = {0};
-	static const bignum25519 MM16 one = {1};
+	static const bignum25519 one = {1};
 	unsigned char parity = p[31] >> 7;
 	unsigned char check[32];
-	bignum25519 MM16 t, root, num, den, d3;
+	bignum25519 t, root, num, den, d3;
 
 	curve25519_expand(r->y, p);
 	curve25519_copy(r->z, one);
@@ -257,9 +257,9 @@ DONNA_INLINE static void ge25519_set_neutral(ge25519 *r)
 /* computes [s1]p1 + [s2]base */
 STATIC void ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1, const bignum256modm s2) {
 	signed char slide1[256], slide2[256];
-	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
-	ge25519 MM16 d1;
-	ge25519_p1p1 MM16 t;
+	ge25519_pniels pre1[S1_TABLE_SIZE];
+	ge25519 d1;
+	ge25519_p1p1 t;
 	int32_t i;
 
 	contract256_slidingwindow_modm(slide1, s1, S1_SWINDOWSIZE);
@@ -296,9 +296,9 @@ STATIC void ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, con
 /* computes [s1]p1 */
 STATIC void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[256];
-	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
-	ge25519 MM16 d1;
-	ge25519_p1p1 MM16 t;
+	ge25519_pniels pre1[S1_TABLE_SIZE];
+	ge25519 d1;
+	ge25519_p1p1 t;
 	int32_t i;
 
 	contract256_slidingwindow_modm(slide1, s1, S1_SWINDOWSIZE);
@@ -424,10 +424,10 @@ STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const uint8_
 /* computes [s1]p1, constant time */
 STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[64];
-	ge25519_pniels MM16 pre1[9];
-	ge25519_pniels MM16 pre;
-	ge25519 MM16 d1, r1;
-	ge25519_p1p1 MM16 t;
+	ge25519_pniels pre1[9];
+	ge25519_pniels pre;
+	ge25519 d1, r1;
+	ge25519_p1p1 t;
 	int32_t i, j;
 
 	contract256_window4_modm(slide1, s1);
@@ -466,7 +466,7 @@ ge25519_windowb_equal(uint32_t b, uint32_t c) {
 #include <stdio.h>
 static void
 ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][96], uint32_t pos, signed char b) {
-	bignum25519 MM16 neg;
+	bignum25519 neg;
 	uint32_t sign = (uint32_t)((unsigned char)b >> 7);
 	uint32_t mask = ~(sign - 1);
 	uint32_t u = (b + mask) ^ mask;
