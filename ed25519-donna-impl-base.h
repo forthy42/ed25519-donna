@@ -353,8 +353,8 @@ DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, 
  */
 DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, long * n, int stride) {
   int i;
-  long x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
-  for(p+=stride; p<n; p+=stride) {
+  long x0=r[0], x1=r[1], x2=r[2], x3=r[3], y0, y1, y2, y3;
+  for(; p<n; p+=stride) {
     y0 = p[0];
     y1 = p[1];
     y2 = p[2];
@@ -371,15 +371,35 @@ DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, l
 }
 #define HAS_CMOVE_STRIDE4
 
+DONNA_INLINE static void ge25519_cmove_stride4b(long * r, long * p, long * pos, long * n, int stride) {
+  int i;
+  long x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
+  for(p+=stride; p<n; p+=stride) {
+    y0 = p[0];
+    y1 = p[1];
+    y2 = p[2];
+    y3 = p[3];
+    x0 = (p==pos) ? y0 : x0;
+    x1 = (p==pos) ? y1 : x1;
+    x2 = (p==pos) ? y2 : x2;
+    x3 = (p==pos) ? y3 : x3;
+  }
+  r[0] = x0;
+  r[1] = x1;
+  r[2] = x2;
+  r[3] = x3;
+}
+#define HAS_CMOVE_STRIDE4B
+
 STATIC void ge25519_move_conditional_pniels_array(ge25519_pniels * r, const ge25519_pniels * p, int pos, int n) {
-#ifdef HAS_CMOVE_STRIDE4
+#ifdef HAS_CMOVE_STRIDE4B
   int i;
   for(i=0; i<sizeof(ge25519_pniels)/sizeof(long); i+=4) {
-    ge25519_cmove_stride4(((long*)r)+i,
-			  ((long*)p)+i,
-			  ((long*)(p+pos))+i,
-			  ((long*)(p+n))+i,
-			  sizeof(ge25519_pniels)/sizeof(long));
+    ge25519_cmove_stride4b(((long*)r)+i,
+			   ((long*)p)+i,
+			   ((long*)(p+pos))+i,
+			   ((long*)(p+n))+i,
+			   sizeof(ge25519_pniels)/sizeof(long));
   }
 #else
   int i;
@@ -442,6 +462,7 @@ ge25519_windowb_equal(uint32_t b, uint32_t c) {
 	return ((b ^ c) - 1) >> 31;
 }
 
+#include <stdio.h>
 static void
 ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][96], uint32_t pos, signed char b) {
 	bignum25519 neg;
