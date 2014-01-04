@@ -1,0 +1,14 @@
+#!/bin/bash
+# Fake configure script
+
+AC_INIT([ed25519-donna],[13nov2013],[https://forthy42@github.com/forthy42/ed25519-donna.git])
+AC_PREREQ(2.54)
+
+AC_CANONICAL_HOST
+AC_PROG_CC
+
+AC_SUBST(CC)
+AC_SUBST(CFLAGS)
+AC_SUBST(host)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
