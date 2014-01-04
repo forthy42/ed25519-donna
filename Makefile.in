@@ -5,13 +5,15 @@ CC=@CC@
 LIB=ed25519-prims
 PREFIX=$(subst gcc,,$(CC))
 BITS=`getconf LONG_BIT|grep 64`
-INSTALL=/usr/local
+DEST=/usr/local
 INCLUDES=ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h
+INSTALL = /usr/bin/install -c
+INSTALL_DATA = ${INSTALL} -m 644
 
 all:
 	$(PREFIX)libtool --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
-	$(PREFIX)libtool --tag=CC --mode=link $(CC) -module -rpath $(INSTALL)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
+	$(PREFIX)libtool --tag=CC --mode=link $(CC) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
 
 install:
-	$(PREFIX)libtool --mode=install install -c .libs/lib$(LIB).la $(INSTALL)/lib$(BITS)
-	cp $(INCLUDES) $(INSTALL)/include
+	$(PREFIX)libtool --mode=install install -c .libs/lib$(LIB).la $(DEST)/lib$(BITS)
+	$(INSTALL_DATA) $(INCLUDES) $(DEST)/include
