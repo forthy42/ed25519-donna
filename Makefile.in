@@ -1,7 +1,7 @@
 # fake makefile
 
 CFLAGS=@CFLAGS@
-CC=@CC@ $(CFLAGS)
+CC=@CC@
 LIB=ed25519-prims
 PREFIX=$(subst gcc,,$(CC))
 BITS=`echo ${BITS:-$(getconf LONG_BIT|grep 64)}`
@@ -11,8 +11,8 @@ INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 
 all:
-	$(PREFIX)libtool --tag=CC --mode=compile $(CC) -c $(LIB).c
-	$(PREFIX)libtool --tag=CC --mode=link $(CC) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
+	$(PREFIX)libtool --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
+	$(PREFIX)libtool --tag=CC --mode=link $(CC) $(CFLAGS) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
 
 install:
 	$(PREFIX)libtool --mode=install install -c .libs/lib$(LIB).la $(DEST)/lib$(BITS)
