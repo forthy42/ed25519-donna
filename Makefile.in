@@ -1,17 +1,17 @@
 # fake makefile
 
 CFLAGS=@CFLAGS@
-CC=@CC@
+CC=@CC@ $(CFLAGS)
 LIB=ed25519-prims
 PREFIX=$(subst gcc,,$(CC))
-BITS=`getconf LONG_BIT|grep 64`
+BITS=`echo ${BITS:-$(getconf LONG_BIT|grep 64)}`
 DEST=/usr/local
 INCLUDES=ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 
 all:
-	$(PREFIX)libtool --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
+	$(PREFIX)libtool --tag=CC --mode=compile $(CC) -c $(LIB).c
 	$(PREFIX)libtool --tag=CC --mode=link $(CC) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
 
 install:
