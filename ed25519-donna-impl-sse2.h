@@ -330,6 +330,10 @@ ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256
 	}
 }
 
+#ifndef MM16
+# define MM16 __attribute__((aligned(16)))
+#endif
+
 STATIC void
 ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[256];
