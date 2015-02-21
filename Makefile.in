@@ -3,7 +3,7 @@
 CFLAGS=@CFLAGS@
 CC=@CC@
 LIB=ed25519-prims
-PREFIX=$(subst clang,,$(subst gcc,,$(CC)))
+LIBTOOL=@LIBTOOL@
 BITS=`echo ${BITS:-$(getconf LONG_BIT|grep 64)}`
 DEST=/usr/local
 INCLUDES=ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h
@@ -11,12 +11,12 @@ INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 
 all:
-	$(PREFIX)libtool --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
-	$(PREFIX)libtool --tag=CC --mode=link $(CC) $(CFLAGS) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
+	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
+	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
 
 clean:
 	rm -rf *.o *.lo .libs
 
 install:
-	$(PREFIX)libtool --mode=install install -c .libs/lib$(LIB).la $(DEST)/lib$(BITS)
+	$(LIBTOOL) --mode=install install -c .libs/lib$(LIB).la $(DEST)/lib$(BITS)
 	$(INSTALL_DATA) $(INCLUDES) $(DEST)/include
