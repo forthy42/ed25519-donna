@@ -3,7 +3,7 @@
 CFLAGS=@CFLAGS@
 CC=@CC@
 LIB=ed25519-prims
-PREFIX=$(subst gcc,,$(CC))
+PREFIX=$(subst clang,,$(subst gcc,,$(CC)))
 BITS=`echo ${BITS:-$(getconf LONG_BIT|grep 64)}`
 DEST=/usr/local
 INCLUDES=ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h
