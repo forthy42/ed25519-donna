@@ -12,7 +12,7 @@ PRECLANG=${RRECC%clang*}
 LIBTOOL=${PRECLANG}libtool
 LDFLAGS="-version-info $PACKAGE_VERSION -no-undefined"
 
-if [ $(uname -o) = Cygwin ]
+if [ "$(uname -o)" = Cygwin ]
 then
     BITS=""
 else
