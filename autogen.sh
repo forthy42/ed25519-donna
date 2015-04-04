@@ -1,3 +1,8 @@
-#!/bin/bash
+#!/bin/sh -e
+test -n "$srcdir" || srcdir=`dirname "$0"`
+test -n "$srcdir" || srcdir=.
 
-autoconf
+autoreconf --force --install --verbose "$srcdir"
+aclocal --install -I m4
+automake --add-missing
+test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"
