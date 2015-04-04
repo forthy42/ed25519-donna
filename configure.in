@@ -11,10 +11,19 @@ PRECC=${CC%gcc*}
 PRECLANG=${RRECC%clang*}
 LIBTOOL=${PRECLANG}libtool
 LDFLAGS="-version-info $PACKAGE_VERSION -no-undefined"
+
+if [ $(uname -o) = Cygwin ]
+then
+    BITS=""
+else
+    BITS=`echo ${BITS:-$(getconf LONG_BIT|grep 64)}`
+fi
+
 AC_SUBST(CC)
 AC_SUBST(LIBTOOL)
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(host)
+AC_SUBST(BITS)
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
