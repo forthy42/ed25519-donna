@@ -1,7 +1,7 @@
 #!/bin/bash
 # Fake configure script
 
-AC_INIT([ed25519-donna],[13nov2013],[https://forthy42@github.com/forthy42/ed25519-donna.git])
+AC_INIT([ed25519-donna],[1:0],[https://forthy42@github.com/forthy42/ed25519-donna.git])
 AC_PREREQ(2.54)
 
 AC_CANONICAL_HOST
@@ -10,9 +10,11 @@ AC_PROG_CC
 PRECC=${CC%gcc*}
 PRECLANG=${RRECC%clang*}
 LIBTOOL=${PRECLANG}libtool
+LDFLAGS="-version-info $PACKAGE_VERSION -no-undefined"
 AC_SUBST(CC)
 AC_SUBST(LIBTOOL)
 AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
 AC_SUBST(host)
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

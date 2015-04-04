@@ -1,6 +1,7 @@
 # fake makefile
 
 CFLAGS=@CFLAGS@
+LDFLAGS=@LDFLAGS@
 CC=@CC@
 LIB=ed25519-prims
 LIBTOOL=@LIBTOOL@
@@ -12,7 +13,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 
 all:
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(CFLAGS) -c $(LIB).c
-	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
+	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -module -rpath $(DEST)/lib$(BITS)/ $(LIB).lo -o .libs/lib$(LIB).la
 
 clean:
 	rm -rf *.o *.lo .libs
