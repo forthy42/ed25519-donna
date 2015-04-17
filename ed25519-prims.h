@@ -39,4 +39,10 @@ int lte256_modm_batch(const bignum256modm a, const bignum256modm b, size_t limbs
 int iszero256_modm_batch(const bignum256modm a);
 int isone256_modm_batch(const bignum256modm a);
 
+const ge25519 ge25519_basepoint;
+const bignum25519 ge25519_ecd;
+const bignum25519 ge25519_ec2d;
+const bignum25519 ge25519_sqrtneg1;
+const ge25519 ge25519_niels_sliding_multiples[32];
+
 #endif
