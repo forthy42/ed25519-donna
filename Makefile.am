@@ -16,7 +16,15 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 AM_CPPFLAGS = $(EXAMPLE_CFLAGS)
 
 lib_LTLIBRARIES = libed25519prims.la
+if FAST
+lib_LTLIBRARIES += libed25519primsfast.la
+endif
 libed25519prims_la_SOURCES = ed25519-prims.c
+libed25519primsfast_la_SOURCES = ed25519-prims.c
 include_HEADERS = ed25519.h ed25519-prims.h ed25519-donna-portable-identify.h
 libed25519prims_la_LIBADD = 
 libed25519prims_la_LDFLAGS = -version-info ${VERSION} -no-undefined
+libed25519prims_la_CFLAGS = @flags@
+libed25519primsfast_la_LIBADD = 
+libed25519primsfast_la_LDFLAGS = -version-info ${VERSION} -no-undefined
+libed25519primsfast_la_CFLAGS = @fastflags@
