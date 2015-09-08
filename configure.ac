@@ -15,7 +15,7 @@ nomflags="`echo $CFLAGS | sed -e 's/-m[[^ ]]* //g'`"
 case "$host_alias" in
     arm-linux-androideabi)
 	flags="$CFLAGS"
-	fastflags="-O3 -mfpu=neon-vfpv4"
+	fastflags="-O3 -mfpu=neon-vfpv4 $nomflags"
 	enable_fast=yes
 	CFLAGS=""
 	;;
@@ -24,7 +24,7 @@ case "$host_alias" in
 	;;
     i686-linux-android)
 	flags="$CFLAGS"
-	fastflags="-O3 -m32 -mssse3"
+	fastflags="-O3 -m32 -mssse3 $nomflags"
 	enable_fast=yes
 	CFLAGS=""
 	;;
@@ -53,7 +53,6 @@ PRECLANG=${PRECC%clang*}
 LIBTOOL=${PRECLANG}libtool
 echo "Libtool: $PRECC, $PRECLANG, $LIBTOOL"
 
-AC_SUBST(nomflags)
 AC_SUBST(fastflags)
 AC_SUBST(flags)
 AC_SUBST(LIBTOOL)
