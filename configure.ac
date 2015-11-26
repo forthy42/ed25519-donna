@@ -34,9 +34,6 @@ case "$host_alias" in
 	;;
 esac
 
-dnl MacOS X has a libtool that does something else
-AC_CHECK_PROGS(GNU_LIBTOOL,"glibtool --tag=CC" libtool)
-
 AC_ARG_ENABLE([fast],
 [  --enable-fast    Turn on optional fast library with non-standard CPU features],
 [case "${enableval}" in
@@ -53,7 +50,9 @@ LT_INIT
 
 PRECC=${CC%gcc*}
 PRECLANG=${PRECC%clang*}
-LIBTOOL=${PRECLANG}libtool
+dnl MacOS X has a libtool that does something else
+AC_CHECK_PROGS(LIBTOOL,"glibtool --tag=CC" libtool)
+LIBTOOL=${PRECLANG}${LIBTOOL}
 echo "Libtool: $PRECC, $PRECLANG, $LIBTOOL"
 
 AC_SUBST(fastflags)
