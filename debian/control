@@ -1,13 +1,15 @@
-Source: ed25519-donna
+Source: ed25519-prim
 Section: programming
 Priority: optional
 Maintainer: Bernd Paysan <bernd@net2o.de>
 Build-Depends: debhelper, build-essential, gcc, autoconf, automake, libtool, libtool-bin, libc
 
-Package: ed25519-donna
+Package: ed25519-prim
 Version: 1.0
 Architecture: any
 Depends: 
-Description: Ed25519-donna
- Ed25519-donna is the crypto primitive of DJB's ed25519 elliptic curve
+Description: ed25519-prim
+ ed25519-prim is the crypto primitive of DJB's ed25519 elliptic curve
  crpytography.  It can be used to sign and do to Diffie Hellman exchange.
+ The actual signign stuff with hash and so has been removed from ed25519-donna,
+ to allow more flexibility.
