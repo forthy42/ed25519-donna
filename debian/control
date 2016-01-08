@@ -7,7 +7,8 @@ Build-Depends: debhelper, build-essential, gcc, autoconf, automake, libtool, lib
 Package: ed25519-prim
 Version: 1.0
 Architecture: any
-Depends: 
+Depends:  ${shlibs:Depends}
+Multi-Arch: same
 Description: ed25519-prim
  ed25519-prim is the crypto primitive of DJB's ed25519 elliptic curve
  crpytography.  It can be used to sign and do to Diffie Hellman exchange.
