@@ -28,3 +28,6 @@ libed25519primsfast_la_LIBADD =
 libed25519primsfast_la_LDFLAGS = -version-info ${VERSION} -no-undefined
 libed25519primsfast_la_CFLAGS = @fastflags@
 libed25519primsfast_la_SOURCES = ed25519-prims.c
+
+install-exec-hook:
+	-/sbin/ldconfig $(libdir)
