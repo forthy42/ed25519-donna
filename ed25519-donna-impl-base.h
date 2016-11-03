@@ -327,26 +327,6 @@ STATIC void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bign
 	}
 }
 
-DONNA_INLINE static void ge25519_move_conditional_niels(ge25519_niels *a, const ge25519_niels *b, uint32_t flag) {
-	curve25519_move_conditional(a->ysubx, b->ysubx, flag);
-	curve25519_move_conditional(a->xaddy, b->xaddy, flag);
-	curve25519_move_conditional(a->t2d, b->t2d, flag);
-}
-
-DONNA_INLINE static void ge25519_move_conditional_pniels(ge25519_pniels *a, const ge25519_pniels *b, uint32_t flag) {
-	curve25519_move_conditional(a->ysubx, b->ysubx, flag);
-	curve25519_move_conditional(a->xaddy, b->xaddy, flag);
-	curve25519_move_conditional(a->z, b->z, flag);
-	curve25519_move_conditional(a->t2d, b->t2d, flag);
-}
-
-DONNA_INLINE static void ge25519_move_conditional(ge25519 *a, const ge25519 *b, uint32_t flag) {
-	curve25519_move_conditional(a->x, b->x, flag);
-	curve25519_move_conditional(a->y, b->y, flag);
-	curve25519_move_conditional(a->z, b->z, flag);
-	curve25519_move_conditional(a->t, b->t, flag);
-}
-
 /*
  * The following conditional move stuff uses conditional moves.
  * I will check on which compilers this works, and provide suitable
