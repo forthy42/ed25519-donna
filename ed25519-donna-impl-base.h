@@ -336,14 +336,15 @@ DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, l
   int i;
   long x0=r[0], x1=r[1], x2=r[2], x3=r[3], y0, y1, y2, y3;
   for(; p<n; p+=stride) {
+    int flag=(p==pos);
     y0 = p[0];
     y1 = p[1];
     y2 = p[2];
     y3 = p[3];
-    x0 = (p==pos) ? y0 : x0;
-    x1 = (p==pos) ? y1 : x1;
-    x2 = (p==pos) ? y2 : x2;
-    x3 = (p==pos) ? y3 : x3;
+    x0 = flag ? y0 : x0;
+    x1 = flag ? y1 : x1;
+    x2 = flag ? y2 : x2;
+    x3 = flag ? y3 : x3;
   }
   r[0] = x0;
   r[1] = x1;
@@ -356,14 +357,15 @@ DONNA_INLINE static void ge25519_cmove_stride4b(long * r, long * p, long * pos, 
   int i;
   long x0=p[0], x1=p[1], x2=p[2], x3=p[3], y0, y1, y2, y3;
   for(p+=stride; p<n; p+=stride) {
+    int flag=(p==pos);
     y0 = p[0];
     y1 = p[1];
     y2 = p[2];
     y3 = p[3];
-    x0 = (p==pos) ? y0 : x0;
-    x1 = (p==pos) ? y1 : x1;
-    x2 = (p==pos) ? y2 : x2;
-    x3 = (p==pos) ? y3 : x3;
+    x0 = flag ? y0 : x0;
+    x1 = flag ? y1 : x1;
+    x2 = flag ? y2 : x2;
+    x3 = flag ? y3 : x3;
   }
   r[0] = x0;
   r[1] = x1;
