@@ -1,6 +1,6 @@
 ## ExampleLib Example: an example of using Automake to link with a library
 
-AC_INIT([ED25519], [3:2], [bernd@net2o.de], [ed25519-donna],
+AC_INIT([ED25519], [3:3], [bernd@net2o.de], [ed25519-donna],
         [http://keccak.noekeon.org/])
 AC_PREREQ([2.59])
 AM_INIT_AUTOMAKE([1.10 -Wall no-define])
