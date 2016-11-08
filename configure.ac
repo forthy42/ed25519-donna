@@ -13,16 +13,13 @@ nomflags="`echo $CFLAGS | sed -e 's/-m[[^ ]]* //g'`"
 
 # special optimizations for some plattforms
 case "$host_alias" in
-    arm-linux-androideabi)
+    arm-linux*)
 	flags="$CFLAGS"
 	fastflags="-O3 -mfpu=neon $nomflags"
 	enable_fast=yes
 	CFLAGS=""
 	;;
-    arm*-*eabihf)
-	CFLAGS="-O3 -mfpu=neon"
-	;;
-    i686-linux-android)
+    i686-linux*)
 	flags="$CFLAGS"
 	fastflags="-O3 -m32 -mssse3 $nomflags"
 	enable_fast=yes
