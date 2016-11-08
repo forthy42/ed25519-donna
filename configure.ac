@@ -32,6 +32,10 @@ case "$host_alias" in
 	# if you don't want sse, specify i586-linux-gnu
 	CFLAGS="-O3 -m32 -mssse3"
 	;;
+    *)
+	# at least use O3, otherwise we might not get conditional moves
+	CFLAGS="-O3"
+	;;
 esac
 
 AC_ARG_ENABLE([fast],
