@@ -19,7 +19,7 @@ case "$host_alias" in
 	enable_fast=yes
 	CFLAGS=""
 	;;
-    i686-linux*|i686-cygwin*)
+    i686-linux*|i686-*cygwin*)
 	flags="$CFLAGS"
 	fastflags="-O3 -m32 -mssse3 $nomflags"
 	enable_fast=yes
