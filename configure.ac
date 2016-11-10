@@ -12,14 +12,14 @@ flags="$CFLAGS"
 nomflags="`echo $CFLAGS | sed -e 's/-m[[^ ]]* //g'`"
 
 # special optimizations for some plattforms
-case "$host_alias" in
-    arm-linux*)
+case "$host" in
+    arm-*linux*)
 	flags="$CFLAGS"
 	fastflags="-O3 -mfpu=neon $nomflags"
 	enable_fast=yes
 	CFLAGS=""
 	;;
-    i686-linux*|i686-*cygwin*)
+    i686-*linux*|i686-*cygwin*)
 	flags="$CFLAGS"
 	fastflags="-O3 -m32 -mssse3 $nomflags"
 	enable_fast=yes
