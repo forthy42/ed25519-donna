@@ -22,15 +22,13 @@ case "$host" in
     arm*-*linux*)
 	flags="$CFLAGS"
 	fastflags="-O3 -mfpu=neon $nomflags"
-	enable_fast+set=set
-	enable_fast=yes
+	enable_fast=set
 	CFLAGS=""
 	;;
     i686-*linux*|i686-*cygwin*)
 	flags="$CFLAGS"
 	fastflags="-O3 -m32 -mssse3 $nomflags"
-	enable_fast+set=set
-	enable_fast=yes
+	enable_fast=set
 	CFLAGS=""
 	;;
     i686-*)
