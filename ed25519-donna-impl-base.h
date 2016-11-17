@@ -331,6 +331,10 @@ STATIC void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bign
  * The following conditional move stuff uses conditional moves.
  * I will check on which compilers this works, and provide suitable
  * workarounds for those where it doesn't.
+ *
+ * This works on gcc 4.x and above with -O3.  Don't use -O2, this will
+ * cause the code to not generate conditional moves.  Don't use any -march=
+ * with less than i686 on x86
  */
 DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, long * n, int stride) {
   int i;
