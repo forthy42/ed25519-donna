@@ -421,7 +421,7 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 	ge25519_full_to_pniels(pre1+1, p1);
 	ge25519_double(&d1, p1);
 	ge25519_full_to_pniels(pre1+2, &d1);
-	for (i = 0; i < 7; i++) {
+	for (i = 1; i < 7; i++) {
 		ge25519_pnielsadd(&pre1[i+2], &d1, &pre1[i]);
 	}
 
