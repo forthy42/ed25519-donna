@@ -21,6 +21,9 @@ typedef uint32_t bignum25519[10];
 typedef struct ge25519_t {
         bignum25519 x, y, z, t;
 } ge25519;
+typedef struct ge25519_niels_t {
+	bignum25519 ysubx, xaddy, t2d;
+} ge25519_niels;
 
 void ge25519_pack(unsigned char r[32], const ge25519 *p);
 int ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]);
@@ -43,6 +46,6 @@ const ge25519 ge25519_basepoint;
 const bignum25519 ge25519_ecd;
 const bignum25519 ge25519_ec2d;
 const bignum25519 ge25519_sqrtneg1;
-const ge25519 ge25519_niels_sliding_multiples[32];
+const ge25519_niels ge25519_niels_sliding_multiples[32];
 
 #endif
