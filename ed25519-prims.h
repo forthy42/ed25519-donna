@@ -27,6 +27,7 @@ typedef struct ge25519_niels_t {
 
 void ge25519_pack(unsigned char r[32], const ge25519 *p);
 int ge25519_unpack_negative_vartime(ge25519 *r, const unsigned char p[32]);
+void ge25519_add(ge25519 *r, const ge25519 *p,  const ge25519 *q);
 void ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1, const bignum256modm s2);
 void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1);
 void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1);

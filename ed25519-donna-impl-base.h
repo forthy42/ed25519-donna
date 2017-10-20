@@ -119,7 +119,7 @@ ge25519_double(ge25519 *r, const ge25519 *p) {
 	ge25519_p1p1_to_full(r, &t);
 }
 
-static void
+STATIC void
 ge25519_add(ge25519 *r, const ge25519 *p,  const ge25519 *q) {
 	ge25519_p1p1 t;
 	ge25519_add_p1p1(&t, p, q);
