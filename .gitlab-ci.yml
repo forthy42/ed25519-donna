@@ -2,7 +2,7 @@ image: debian:unstable
  
 before_script:
   - apt update -qq
-  - apt-get -y install gcc automake libtool make
+  - apt-get -y install gcc automake libtool make dpkg-dev debhelper
  
 stages:
   - build
