@@ -2,7 +2,7 @@ image: debian:unstable
  
 before_script:
   - apt update -qq
-  - ./install-deps.sh
+  - apt-get -y install gcc automake libtool
  
 stages:
   - build
