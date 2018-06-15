@@ -29,5 +29,15 @@ libed25519primsfast_la_LDFLAGS = -version-info ${VERSION} -no-undefined
 libed25519primsfast_la_CFLAGS = @fastflags@
 libed25519primsfast_la_SOURCES = ed25519-prims.c
 
+TESTS = ./test ./test-internals
+check_PROGRAMS = test test-internals
+test_SOURCES = test.c ed25519.c
+test_INCLUDES = test-ticks.h
+test_CFLAGS = -DSTATIC=static -DED25519_REFHASH -DED25519_TEST
+test_LDFLAGS = -led25519prims
+test_internals_SOURCES = test-internals.c
+test_internals_CFLAGS = -DSTATIC=static -DED25519_REFHASH -DED25519_TEST
+test_internals_LDFLAGS = -led25519prims
+
 install-exec-hook:
 	-/sbin/ldconfig $(libdir)
