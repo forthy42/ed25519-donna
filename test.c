@@ -224,7 +224,7 @@ test_main(void) {
 		edassert_equal_round(dataset[i].sig, sig, sizeof(sig), i, "signature didn't match");
 		edassert(!ed25519_sign_open((unsigned char *)dataset[i].m, i, pk, sig), i, "failed to open message");
 
-		memcpy(forge, dataset[i].m, i);
+		memmove(forge, dataset[i].m, i);
 		if (i)
 			forge[i - 1] += 1;
 
