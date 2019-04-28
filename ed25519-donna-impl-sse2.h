@@ -328,6 +328,8 @@ ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256
 
 		ge25519_p1p1_to_partial(r, &t);
 	}
+	expilcit_bzero(slide1, sizeof(slide1));
+	expilcit_bzero(slide2, sizeof(slide2));
 }
 
 #ifndef MM16
@@ -368,6 +370,7 @@ ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1
 
 		ge25519_p1p1_to_partial(r, &t);
 	}
+	expilcit_bzero(slide1, sizeof(slide1));
 }
 
 DONNA_INLINE static void ge25519_cmove_stride4(long * r, long * p, long * pos, long * n, int stride) {
@@ -452,6 +455,7 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 		ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
 		ge25519_p1p1_to_partial(r, &t);
 	}
+	expilcit_bzero(slide1, sizeof(slide1));
 }
 
 #if !defined(HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS)
