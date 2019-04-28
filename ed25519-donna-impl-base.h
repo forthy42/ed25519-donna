@@ -291,8 +291,8 @@ STATIC void ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, con
 
 		ge25519_p1p1_to_partial(r, &t);
 	}
-	expilcit_bzero(slide1, sizeof(slide1));
-	expilcit_bzero(slide2, sizeof(slide2));
+	explicit_bzero(slide1, sizeof(slide1));
+	explicit_bzero(slide2, sizeof(slide2));
 }
 
 /* computes [s1]p1 */
@@ -327,7 +327,7 @@ STATIC void ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bign
 
 		ge25519_p1p1_to_partial(r, &t);
 	}
-	expilcit_bzero(slide1, sizeof(slide1));
+	explicit_bzero(slide1, sizeof(slide1));
 }
 
 /*
@@ -443,7 +443,7 @@ STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256mod
 		ge25519_pnielsadd_p1p1(&t, r, &pre, (unsigned char)slide1[i] >> 7);
 		ge25519_p1p1_to_partial(r, &t);
 	}
-	expilcit_bzero(slide1, sizeof(slide1));
+	explicit_bzero(slide1, sizeof(slide1));
 }
 
 #if !defined(HAVE_GE25519_SCALARMULT_BASE_CHOOSE_NIELS)
