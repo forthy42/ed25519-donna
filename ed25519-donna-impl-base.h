@@ -1,6 +1,9 @@
 /*
 	conversions
 */
+#if defined(__ANDROID__)
+# define explicit_bzero(b, len) memset((b), 0, (len))
+#endif
 
 DONNA_INLINE static void
 ge25519_p1p1_to_partial(ge25519 *r, const ge25519_p1p1 *p) {
