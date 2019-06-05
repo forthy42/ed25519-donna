@@ -38,6 +38,7 @@ void contract256_modm(unsigned char out[32], const bignum256modm in);
 void add256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y);
 void mul256_modm(bignum256modm r, const bignum256modm x, const bignum256modm y);
 void sub256_modm_batch(bignum256modm out, const bignum256modm a, const bignum256modm b, size_t limbsize);
+void invert256_modm(bignum256modm recip, const bignum256modm s);
 int lt256_modm_batch(const bignum256modm a, const bignum256modm b, size_t limbsize);
 int lte256_modm_batch(const bignum256modm a, const bignum256modm b, size_t limbsize);
 int iszero256_modm_batch(const bignum256modm a);

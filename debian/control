@@ -5,7 +5,7 @@ Maintainer: Bernd Paysan <bernd@net2o.de>
 Build-Depends: debhelper, build-essential, gcc, autoconf, automake, libtool, libtool-bin, libc
 
 Package: ed25519-prim
-Version: 3.9
+Version: 3.10
 Architecture: any
 Depends:  ${shlibs:Depends}
 Multi-Arch: same

@@ -57,6 +57,7 @@
 #else
 	#include "modm-donna-32bit.h"
 #endif
+#include "modm-invert.h"
 
 typedef unsigned char hash_512bits[64];
 
