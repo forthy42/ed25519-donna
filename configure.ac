@@ -57,6 +57,7 @@ AC_CHECK_PROGS(LIBTOOL,"glibtool --tag=CC" libtool)
 LIBTOOL=${PRECLANG}${LIBTOOL}
 echo "Libtool: $PRECC, $PRECLANG, $LIBTOOL"
 
+AC_CHECK_FUNCS(explicit_bzero)
 AC_SUBST(fastflags)
 AC_SUBST(flags)
 AC_SUBST(LIBTOOL)

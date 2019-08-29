@@ -16,6 +16,7 @@
 
 #define STATIC
 
+#include "config.h"
 #include "ed25519-donna.h"
 #include "ed25519.h"
 

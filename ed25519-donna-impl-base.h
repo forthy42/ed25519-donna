@@ -1,7 +1,7 @@
 /*
 	conversions
 */
-#if defined(__ANDROID__)
+#ifndef HAVE_EXPLICIT_BZERO
 # define explicit_bzero(b, len) memset((b), 0, (len))
 #endif
 
