@@ -10,7 +10,7 @@ stages:
 build-distcheck:
   stage: build
   script:
-    - ./autogen.sh
+    - ./autogen
     - ./configure
     - make
     - make check-TESTS
