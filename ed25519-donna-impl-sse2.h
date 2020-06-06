@@ -329,16 +329,12 @@ ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256
 	explicit_bzero(slide2, sizeof(slide2));
 }
 
-#ifndef MM16
-# define MM16 __attribute__((aligned(16)))
-#endif
-
 STATIC void
 ge25519_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[256];
-	ge25519_pniels MM16 pre1[S1_TABLE_SIZE];
-	ge25519 MM16 d1;
-	ge25519_p1p1 MM16 t;
+	ge25519_pniels ALIGN(16) pre1[S1_TABLE_SIZE];
+	ge25519 ALIGN(16) d1;
+	ge25519_p1p1 ALIGN(16) t;
 	int32_t i;
 
 	contract256_slidingwindow_modm(slide1, s1, S1_SWINDOWSIZE);
@@ -422,10 +418,10 @@ STATIC void ge25519_move_conditional_niels_array(ge25519_niels * r, const uint8_
 /* computes [s1]p1, constant time */
 STATIC void ge25519_scalarmult(ge25519 *r, const ge25519 *p1, const bignum256modm s1) {
 	signed char slide1[64];
-	ge25519_pniels MM16 pre1[9];
-	ge25519_pniels MM16 pre;
-	ge25519 MM16 d1, r1;
-	ge25519_p1p1 MM16 t;
+	ge25519_pniels ALIGN(16) pre1[9];
+	ge25519_pniels ALIGN(16) pre;
+	ge25519 ALIGN(16) d1, r1;
+	ge25519_p1p1 ALIGN(16) t;
 	int32_t i, j;
 
 	contract256_window4_modm(slide1, s1);
