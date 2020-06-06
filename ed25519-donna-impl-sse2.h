@@ -304,10 +304,7 @@ ge25519_double_scalarmult_vartime(ge25519 *r, const ge25519 *p1, const bignum256
 	for (i = 0; i < S1_TABLE_SIZE - 1; i++)
 		ge25519_pnielsadd(&pre1[i+1], &d1, &pre1[i]);
 
-	/* set neutral */
-	memset(r, 0, sizeof(ge25519));
-	r->y[0] = 1;
-	r->z[0] = 1;
+	ge25519_set_neutral(r);
 
 	i = 255;
 	while ((i >= 0) && !(slide1[i] | slide2[i]))
