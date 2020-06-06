@@ -23,13 +23,13 @@ case "$host" in
 	flags="$CFLAGS"
 	fastflags="-O3 -mfpu=neon $nomflags"
 	enable_fast=yes
-	CFLAGS=""
+	CFLAGS="-O3"
 	;;
     i686-*linux*|i686-*cygwin*)
 	flags="$CFLAGS"
 	fastflags="-O3 -m32 -mssse3 $nomflags"
 	enable_fast=yes
-	CFLAGS=""
+	CFLAGS="-O3 -m32"
 	;;
     i686-*)
 	# if you don't want sse, specify i586-linux-gnu

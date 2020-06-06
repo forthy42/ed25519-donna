@@ -8,7 +8,7 @@
 		Bo-Yin Yang
 */
 
-
+#include <assert.h>
 #include "ed25519-donna-portable.h"
 
 #if defined(ED25519_SSE2)
@@ -64,14 +64,17 @@ typedef unsigned char hash_512bits[64];
 /*
 	Timing safe memory compare
 */
-static int
-ed25519_verify(const unsigned char *x, const unsigned char *y, size_t len) {
-	size_t differentbits = 0;
-	while (len--)
-		differentbits |= (*x++ ^ *y++);
-	return (int) (1 & ((differentbits - 1) >> 8));
+static inline int ed25519_verify(long* a, long* b, size_t len) {
+  long diff=0;
+  assert(len == 32);
+  switch(sizeof(long)) {
+    case 4:
+      diff|=((a[4]^b[4])|(a[5]^b[5])|(a[6]^b[6])|(a[7]^b[7]));
+    case 8:
+      diff|=((a[0]^b[0])|(a[1]^b[1])|(a[2]^b[2])|(a[3]^b[3]));
+  }
+  return -(diff==0);
 }
-
 
 /*
  * Arithmetic on the twisted Edwards curve -x^2 + y^2 = 1 + dx^2y^2
