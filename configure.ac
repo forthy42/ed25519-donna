@@ -54,7 +54,7 @@ PRECC=${CC%gcc*}
 PRECLANG=${PRECC%clang*}
 dnl MacOS X has a libtool that does something else
 AC_CHECK_PROGS(LIBTOOL,"glibtool --tag=CC" libtool)
-LIBTOOL=${PRECLANG}${LIBTOOL}
+#LIBTOOL=${PRECLANG}${LIBTOOL}
 echo "Libtool: $PRECC, $PRECLANG, $LIBTOOL"
 
 AC_CHECK_FUNCS(explicit_bzero)
