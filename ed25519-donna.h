@@ -64,7 +64,7 @@ typedef unsigned char hash_512bits[64];
 /*
 	Timing safe memory compare
 */
-static inline int ed25519_verify(long* a, long* b, size_t len) {
+static inline int ed25519_verify(const long* a, const long* b, size_t len) {
   long diff=0;
   assert(len == 32);
   switch(sizeof(long)) {
