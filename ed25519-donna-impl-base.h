@@ -470,7 +470,7 @@ ge25519_scalarmult_base_choose_niels(ge25519_niels *t, const uint8_t table[256][
 	packed[0] = 1;
 	packed[32] = 1;
 
-	ge25519_move_conditional_niels_array(packed, &table[pos*8], u-1, 8);
+	ge25519_move_conditional_niels_array((ge25519_niels *)packed, &table[pos*8], u-1, 8);
 
 	/* expand in to t */
 	curve25519_expand(t->ysubx, packed +  0);
