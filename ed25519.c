@@ -113,7 +113,7 @@ ED25519_FN(ed25519_sign_open) (const unsigned char *m, size_t mlen, const ed2551
 	ge25519_pack(checkR, &R);
 
 	/* check that R = SB - H(R,A,m)A */
-	return ed25519_verify(RS, checkR, 32) ? 0 : -1;
+	return ed25519_verify((const long*)RS, (const long*)checkR, 32) ? 0 : -1;
 }
 
 #include "ed25519-donna-batchverify.h"
